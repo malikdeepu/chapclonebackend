@@ -1,5 +1,5 @@
 const Message = require('../models/Message');
-const User = require('../models/User');  // Import User model to get ObjectIds
+const User = require('../models/User'); 
 
 // Get messages between the logged-in user and the specified userId
 exports.getMessages = async (req, res) => {
@@ -14,9 +14,8 @@ exports.getMessages = async (req, res) => {
       ],
     })
       .sort({ timestamp: 1 })
-      .populate('senderId', 'username')  // Populate with sender's username
-      .populate('receiverId', 'username');  // Populate with receiver's username
-
+      .populate('senderId', 'username')  
+      .populate('receiverId', 'username'); 
     res.status(200).json(messages);
   } catch (error) {
     console.error('Error fetching messages:', error);
@@ -29,7 +28,7 @@ exports.sendMessage = async (req, res) => {
   const { senderUsername, receiverUsername, text } = req.body;
 
   try {
-    // Lookup the sender and receiver by their usernames
+
     const sender = await User.findOne({ username: senderUsername });
     const receiver = await User.findOne({ username: receiverUsername });
 
@@ -37,15 +36,15 @@ exports.sendMessage = async (req, res) => {
       return res.status(404).json({ message: 'Sender or Receiver not found' });
     }
 
-    // Create the message using the ObjectIds of sender and receiver
+   
     const message = new Message({
-      senderId: sender._id,  // Use ObjectId of sender
-      receiverId: receiver._id,  // Use ObjectId of receiver
+      senderId: sender._id,  
+      receiverId: receiver._id,  
       text: text,
     });
 
-    await message.save();  // Save the message to the database
-    res.status(201).json(message);  // Return the saved message
+    await message.save(); 
+    res.status(201).json(message); 
 
   } catch (error) {
     console.error('Error sending message:', error);
